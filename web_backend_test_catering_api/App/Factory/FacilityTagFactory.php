@@ -21,6 +21,8 @@ class FacilityTagFactory extends BaseFactory {
             $data['tag_id'] = (new Tag())->inRandomOrder()->last()->id;
         }
 
+        self::$previousIds[] = join(',', array_values($data));
+
         return $data;
     }
 }

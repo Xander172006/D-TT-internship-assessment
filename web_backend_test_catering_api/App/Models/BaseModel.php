@@ -100,6 +100,38 @@ class BaseModel extends Injectable {
         return $this->where($column, 'LIKE', $value);
     }
 
+    
+    /**
+     * Get the constructed SQL query string.
+     *
+     * @return string
+     */
+    public function getQuery() {
+        $sql = "SELECT * FROM {$this->table}";
+
+        if (!empty($this->query)) {
+            $conditions = [];
+            foreach ($this->query as $condition) {
+                $conditions[] = "{$condition[0]} {$condition[1]} '{$condition[2]}'";
+            }
+            $sql .= " WHERE " . implode(' AND ', $conditions);
+        }
+
+        if ($this->orderBy) {
+            $sql .= " ORDER BY {$this->orderBy[0]} {$this->orderBy[1]}";
+        }
+
+        if ($this->limit) {
+            $sql .= " LIMIT {$this->limit}";
+        }
+
+        if ($this->select) {
+            $sql = str_replace('*', $this->select, $sql);
+        }
+
+        return $sql;
+    }   
+
     /**
      * Set the limit for the query.
      *
@@ -211,6 +243,69 @@ class BaseModel extends Injectable {
     }
 
 
+    // public function whereHas($relation, callable $callback)
+    // {
+    //     if (!method_exists($this, $relation)) {
+    //         throw new Exception("Relation method {$relation} does not exist on model " . static::class);
+    //     }
+
+    //     // Get the query builder for the related model
+    //     $relatedQuery = $this->{$relation}();
+
+    //     // Apply the callback to modify the related query
+    //     $callback($relatedQuery);
+
+    //     // Fetch the related IDs that match the query
+    //     $relatedIds = $relatedQuery->pluck($this->getForeignKey());
+
+    //     // Apply the condition to the parent query (this model)
+    //     if (!empty($relatedIds)) {
+    //         $this->query[] = [$this->primaryKey, 'IN', '(' . implode(',', $relatedIds) . ')'];
+    //     }
+
+    //     return $this;
+    // }
+
+    // public function getForeignKey() {
+    //     return $this->table . '_id';
+    // }
+
+
+        /**
+     * Add an "or where" clause to the query for a relationship.
+     *
+     * @param string $relationModel The name of the relationship.
+     * @param \Closure $callback The callback to apply to the relationship query.
+     * @return $this
+     */
+    public function orWhereHas($relation, $foreignKey, callable $callback, $ownerKey = null) {
+        $relatedModels = $this->hasMany($relation,  $foreignKey, $ownerKey);
+        $filteredModels = $callback($relatedModels);
+        $relatedIds = array_map(function($model) {
+            return $model->id;
+        }, $relatedModels);
+
+        if (!empty($relatedIds)) {
+            $this->query[] = ['OR', 'id', 'IN', '(' . implode(',', $relatedIds) . ')'];
+        }
+
+        return $this;
+    }
+
+        
+    /**
+     * Add an "or where" clause to the query for a relationship (scope version).
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $relation The name of the relationship.
+     * @param \Closure $callback The callback to apply to the relationship query.
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeOrWhereHas($query, $relation, $callback) {
+        return $query->orWhereHas($relation, $callback);
+    }
+
+
     protected function eagerLoadRelations(array &$models) {
         foreach ($this->with as $relation) {
             $relationMethod = $relation;
@@ -263,18 +358,9 @@ class BaseModel extends Injectable {
      * @return int The number of affected rows.
      */
     public function delete() {
-        $sql = "DELETE FROM {$this->table}";
-
-        if (!empty($this->query)) {
-            $conditions = [];
-            foreach ($this->query as $condition) {
-                $conditions[] = "{$condition[0]} {$condition[1]} '{$condition[2]}'";
-            }
-            $sql .= " WHERE " . implode(' AND ', $conditions);
-        }
-
-        // Execute the query using the database connection
-        return $this->db->executeQuery($sql);
+        $sql = "DELETE FROM {$this->table} WHERE id = ?";
+    
+        return $this->db->executeQuery($sql, [$this->id]);
     }
 
     /**
