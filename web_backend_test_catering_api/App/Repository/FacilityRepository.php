@@ -41,9 +41,15 @@ class FacilityRepository extends Injectable
         if (isset($queryParams['name']) && $this->isValidQuery($queryParams['name'])) {
             $searchResults = $this->performSearch($facilities, $queryParams);
             return $this->handleSearchResponse($searchResults, $response);
+
         } else if (isset($queryParams['tag']) && $this->isValidQuery($queryParams['tag'])) {
             $searchResults = $this->performSearch($facilities, $queryParams);
             return $this->handleSearchResponse($searchResults, $response);
+
+        } else if (isset($queryParams['location']) && $this->isValidQuery($queryParams['location'])) {
+            $searchResults = $this->performSearch($facilities, $queryParams);
+            return $this->handleSearchResponse($searchResults, $response);
+
         } else {
             return (new Status\NotFound('Empty Request'))->send();
         }
@@ -101,10 +107,11 @@ class FacilityRepository extends Injectable
         }
 
         // Optional: Join with locations if location city is provided
-        if (!empty($queryParams['location_city'])) {
-            $facilities->whereHas('location', function($query) use ($queryParams) {
-                $query->where('city', 'LIKE', '%' . $queryParams['location_city'] . '%');
-            });
+        if (!empty($queryParams['location'])) {
+            $location = Location::query()->where('city', 'LIKE', '%' . $queryParams['location'] . '%')->get();
+            $facilities->where('location_id', 'LIKE', '%' . $location[0]->id . '%');
+
+            return $facilities->get();
         }
 
     }
