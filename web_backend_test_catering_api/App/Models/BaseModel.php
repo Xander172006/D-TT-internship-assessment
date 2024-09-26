@@ -29,6 +29,11 @@ class BaseModel extends Injectable {
     protected $limit;
 
     /**
+     * @var int|null The offset for the query.
+     */
+    protected $offset;
+
+    /**
      * @var array|null The order by clause for the query.
      */
     protected $orderBy;
@@ -53,6 +58,7 @@ class BaseModel extends Injectable {
     
         $this->query = [];
         $this->limit = null;
+        $this->offset = null;
         $this->orderBy = null;
         $this->select = null;
     }
@@ -243,34 +249,6 @@ class BaseModel extends Injectable {
     }
 
 
-    // public function whereHas($relation, callable $callback)
-    // {
-    //     if (!method_exists($this, $relation)) {
-    //         throw new Exception("Relation method {$relation} does not exist on model " . static::class);
-    //     }
-
-    //     // Get the query builder for the related model
-    //     $relatedQuery = $this->{$relation}();
-
-    //     // Apply the callback to modify the related query
-    //     $callback($relatedQuery);
-
-    //     // Fetch the related IDs that match the query
-    //     $relatedIds = $relatedQuery->pluck($this->getForeignKey());
-
-    //     // Apply the condition to the parent query (this model)
-    //     if (!empty($relatedIds)) {
-    //         $this->query[] = [$this->primaryKey, 'IN', '(' . implode(',', $relatedIds) . ')'];
-    //     }
-
-    //     return $this;
-    // }
-
-    // public function getForeignKey() {
-    //     return $this->table . '_id';
-    // }
-
-
         /**
      * Add an "or where" clause to the query for a relationship.
      *
@@ -361,6 +339,68 @@ class BaseModel extends Injectable {
         $sql = "DELETE FROM {$this->table} WHERE id = ?";
     
         return $this->db->executeQuery($sql, [$this->id]);
+    }
+
+        /**
+     * Paginate the query results.
+     *
+     * @param int $perPage The number of items per page.
+     * @param int $currentPage The current page number.
+     * @return array The paginated results and pagination metadata.
+     */
+    public function paginate($perPage, $currentPage) {
+        $offset = ($currentPage - 1) * $perPage;
+        $this->limit($perPage)->offset($offset);
+
+        $results = $this->get();
+
+        // Get total count
+        $total = $this->count();
+
+        return [
+            'data' => $results,
+            'pagination' => [
+                'total' => $total,
+                'per_page' => $perPage,
+                'current_page' => (int)$currentPage,
+                'last_page' => ceil($total / $perPage),
+                'from' => $offset + 1,
+                'to' => $offset + count($results),
+            ],
+        ];
+    }
+
+    /**
+     * Set the offset for the query.
+     *
+     * @param int $offset
+     * @return $this
+     */
+    public function offset($offset) {
+        $this->offset = $offset;
+        return $this;
+    }
+
+    /**
+     * Get the total count of the query results.
+     *
+     * @return int
+     */
+    public function count() {
+        $sql = "SELECT COUNT(*) as count FROM {$this->table}";
+
+        if (!empty($this->query)) {
+            $conditions = [];
+            foreach ($this->query as $condition) {
+                $conditions[] = "{$condition[0]} {$condition[1]} '{$condition[2]}'";
+            }
+            $sql .= " WHERE " . implode(' AND ', $conditions);
+        }
+
+        $this->db->executeQuery($sql);
+        $result = $this->db->getStatement()->fetch(\PDO::FETCH_ASSOC);
+
+        return $result['count'];
     }
 
     /**

@@ -11,11 +11,7 @@ use App\Plugins\Http\Response as Status;
 use App\Plugins\Http\Exceptions;
 
 class FacilityController extends BaseController {    
-    protected $response; // Ensure this is declared
-    
-    public function __construct($response) {
-        $this->response = $response; // This expects a $response object to be passed
-    }
+    protected $response;
     
    /**
      * Retrieve all facilities along with their locations and tags.

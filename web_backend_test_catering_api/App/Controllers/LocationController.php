@@ -13,7 +13,10 @@ class LocationController extends BaseController {
      * @return void
      */
     public function index() {
-        $locations = Location::query()->get();
+        $page = $this->request->get('page', 1);
+        $perPage = $this->request->get('per_page', 20);
+
+        $locations = Location::query()->paginate($perPage, $page);
         (new Status\Ok($locations))->send();
     }
 
