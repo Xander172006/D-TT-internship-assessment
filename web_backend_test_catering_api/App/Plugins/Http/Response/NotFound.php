@@ -3,10 +3,9 @@
 
 namespace App\Plugins\Http\Response;
 
+use App\Plugins\Http\JsonStatusFail;
 
-use App\Plugins\Http\JsonStatus;
-
-class NotFound extends JsonStatus {
+class NotFound extends JsonStatusFail {
     /** @var int */
     const STATUS_CODE = 404;
     /** @var string */

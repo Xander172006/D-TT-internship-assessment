@@ -20,7 +20,7 @@ CREATE TABLE Facility (
     name VARCHAR(255) NOT NULL,
     creation_date DATE NOT NULL,
     location_id INT,
-    FOREIGN KEY (location_id) REFERENCES Location(id) ON DELETE SET NULL -- Prevent facility deletion on location delete
+    FOREIGN KEY (location_id) REFERENCES Location(id) ON DELETE SET NULL
 );
 
 -- 4. Facility_Tag (Association Table)
@@ -29,5 +29,5 @@ CREATE TABLE Facility_Tag (
     tag_id INT NOT NULL,
     PRIMARY KEY (facility_id, tag_id),
     FOREIGN KEY (facility_id) REFERENCES Facility(id) ON DELETE CASCADE,
-    FOREIGN KEY (tag_id) REFERENCES Tag(id) ON DELETE RESTRICT -- Prevent tag deletion affecting facilities
+    FOREIGN KEY (tag_id) REFERENCES Tag(id) ON DELETE RESTRICT
 );

@@ -22,6 +22,6 @@ abstract class JsonStatus extends Status {
      * @return string
      */
     public function getBody(): string {
-        return json_encode($this->body);
+        return json_encode(['statusCode' => $this->code, 'data' => $this->body]);
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Plugins\Http\Response;
 
-use App\Plugins\Http\JsonStatus;
+use App\Plugins\Http\JsonStatusFail;
 
-class BadRequest extends JsonStatus {
+class BadRequest extends JsonStatusFail {
     /** @var int */
     const STATUS_CODE = 400;
     /** @var string */

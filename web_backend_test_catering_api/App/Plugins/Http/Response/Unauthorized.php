@@ -2,9 +2,9 @@
 
 namespace App\Plugins\Http\Response;
 
-use App\Plugins\Http\JsonStatus;
+use App\Plugins\Http\JsonStatusFail;
 
-class Unauthorized extends JsonStatus {
+class Unauthorized extends JsonStatusFail {
     /** @var int */
     const STATUS_CODE = 401;
     /** @var string */
