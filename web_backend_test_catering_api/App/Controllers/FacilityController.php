@@ -27,7 +27,6 @@ class FacilityController extends BaseController {
             $facility->tags = [];
             $facilityTags = FacilityTag::query()->where('facility_id', '=', $facility->id)->get();
 
-            // retrieve one or more tags
             foreach ($facilityTags as $facilityTag) {
                 $tag = Tag::query()->findById($facilityTag->tag_id);
                 if ($tag) {
@@ -64,7 +63,6 @@ class FacilityController extends BaseController {
         $facilityTags = FacilityTag::query()->where('facility_id', '=', $id)->get();
         $tags = [];
     
-        // retrieve one or more tags
         foreach ($facilityTags as $facilityTag) {
             $tag = Tag::query()->findById($facilityTag->tag_id);
             if ($tag) {
@@ -106,7 +104,6 @@ class FacilityController extends BaseController {
             return;
         }
 
-        // validate if the location exists
         $location = Location::query()->findById($location_id);
         if ($location === null) {
             (new Status\BadRequest(["error" => "Location not found!"]))->send();
@@ -154,21 +151,18 @@ class FacilityController extends BaseController {
             return;
         }
 
-        // validate if location exists
         $location = Location::query()->findById($location_id);
         if ($location === null) {
             (new Status\BadRequest(["error" => "Location not found!"]))->send();
             return;
         }
 
-        // validate if facility already exists
         $facility = Facility::query()->findById($id);
         if ($facility === null) {
             (new Status\BadRequest(["error" => "Facility not found!"]))->send();
             return;
         }
 
-        // validate if tags is an array
         $newTags = [];
         $tags = json_decode($tags, true);
         if (!is_array($tags)) {

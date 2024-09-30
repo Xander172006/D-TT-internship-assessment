@@ -33,27 +33,22 @@ class FacilityRepository extends Injectable
      */
     public function search(array $queryParams)
     {
-        // Initialize the query builder for facilities
         $facilities = Facility::query();
         $response = $this->initializeResponse();
-        
-        // Validate the search query
-        if (isset($queryParams['name']) && $this->isValidQuery($queryParams['name'])) {
-            $searchResults = $this->performSearch($facilities, $queryParams);
-            return $this->handleSearchResponse($searchResults, $response);
 
-        } else if (isset($queryParams['tag']) && $this->isValidQuery($queryParams['tag'])) {
-            $searchResults = $this->performSearch($facilities, $queryParams);
-            return $this->handleSearchResponse($searchResults, $response);
+        $searchableFields = ['name', 'tag', 'location'];
 
-        } else if (isset($queryParams['location']) && $this->isValidQuery($queryParams['location'])) {
-            $searchResults = $this->performSearch($facilities, $queryParams);
-            return $this->handleSearchResponse($searchResults, $response);
-
-        } else {
-            return (new Status\NotFound('Empty Request'))->send();
+        // Iterate through the query parameters to find the first valid query
+        foreach ($searchableFields as $field) {
+            if (isset($queryParams[$field]) && $this->isValidQuery($queryParams[$field])) {
+                $searchResults = $this->performSearch($facilities, $queryParams);
+                return $this->handleSearchResponse($searchResults, $response);
+            }
         }
+
+        return (new Status\NotFound('Empty Request'))->send();
     }
+
 
     /**
      * Initialize the response array.
@@ -91,13 +86,11 @@ class FacilityRepository extends Injectable
     {
         if (!empty($queryParams['name'])) {
             $facilities->where('name', 'LIKE', '%' . $queryParams['name'] . '%');
-
             return $facilities->get();
         }
 
-        // Optional: Join with tags if tag name is provided
+        // Join with tags if tag name is provided
         if (!empty($queryParams['tag'])) {
-            // Find tags matching the search term
             $tags = Tag::query()->where('name', 'LIKE', '%' . $queryParams['tag'] . '%')->get();
             if ($tags) {
                 $facilityTag = FacilityTag::query()->where('tag_id', '=', $tags[0]->id)->get();
@@ -106,7 +99,7 @@ class FacilityRepository extends Injectable
             }
         }
 
-        // Optional: Join with locations if location city is provided
+        // Join with locations if location city is provided
         if (!empty($queryParams['location'])) {
             $location = Location::query()->where('city', 'LIKE', '%' . $queryParams['location'] . '%')->get();
             $facilities->where('location_id', 'LIKE', '%' . $location[0]->id . '%');

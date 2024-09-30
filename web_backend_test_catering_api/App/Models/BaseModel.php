@@ -240,7 +240,6 @@ class BaseModel extends Injectable {
             $instances[] = new static($result);
         }
     
-        // Eager load relationships if any
         if (!empty($this->with)) {
             $this->eagerLoadRelations($instances);
         }
@@ -296,7 +295,6 @@ class BaseModel extends Injectable {
                 return $model->{$this->primaryKey};
             }, $models);
     
-            // Fetch related models for this relation
             $relatedModels = $this->$relationMethod()->whereIn($this->primaryKey, $ids)->get();
     
             // Assign the related models to the parent models
@@ -354,7 +352,6 @@ class BaseModel extends Injectable {
 
         $results = $this->get();
 
-        // Get total count
         $total = $this->count();
 
         return [
@@ -445,13 +442,11 @@ class BaseModel extends Injectable {
             return $property->getName();
         }, $protectedProperties);
 
-        // Remove protected properties from the data array
         foreach ($protectedPropertyNames as $protectedProperty) {
             unset($data[$protectedProperty]);
         }
 
         if (isset($this->{$this->primaryKey})) {
-            // Update existing record
             $sql = "UPDATE {$this->table} SET ";
             $updates = [];
             foreach ($data as $column => $value) {
@@ -465,7 +460,6 @@ class BaseModel extends Injectable {
             return $this->db->executeQuery($sql, $values);
         }
 
-        // Insert new record
         $columns = array_keys($data);
         $placeholders = array_fill(0, count($data), '?');
         $sql = "INSERT INTO {$this->table} (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
@@ -491,7 +485,6 @@ class BaseModel extends Injectable {
             return $property->getName();
         }, $protectedProperties);
 
-        // Remove protected properties from the data array
         foreach ($protectedPropertyNames as $protectedProperty) {
             unset($data[$protectedProperty]);
         }
@@ -501,15 +494,12 @@ class BaseModel extends Injectable {
 
         $sql = "INSERT INTO {$this->table} ({$columns}) VALUES ({$placeholders});";
 
-        // Execute the query using the database connection
-        $this->db->executeQuery($sql, array_values($data));
 
-        // Get the ID of the newly inserted record
+        $this->db->executeQuery($sql, array_values($data));
         $lastInsertedId = $this->db->getLastInsertedId();
 
         // Fetch the newly created record
         $newRecord = $this->query()->where($this->primaryKey, '=', $lastInsertedId)->get();
-        // Return the newly created model instance
         return $newRecord ? new static($newRecord[0]) : null;
     }
 
