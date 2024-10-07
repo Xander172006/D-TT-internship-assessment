@@ -1,0 +1,307 @@
+{
+	"info": {
+		"_postman_id": "ffac76b0-1fe7-4965-b8fa-4fa8eaa1bf66",
+		"name": "D-TT assessme nt",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27702717"
+	},
+	"item": [
+		{
+			"name": "facility",
+			"item": [
+				{
+					"name": "Create Facility",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "D-TT company",
+									"type": "text"
+								},
+								{
+									"key": "location_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "tag_id",
+									"value": "70",
+									"type": "text"
+								},
+								{
+									"key": "creation_date",
+									"value": "2024-08-06",
+									"type": "text"
+								},
+								{
+									"key": "tag",
+									"value": "custom-tag",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost/api/facility/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"facility",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show Facility",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/api/facility/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"facility",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Index Facility",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/api/facility",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"facility"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update facility and tags",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/api/facility/update/30?name=new facility&creation_date=2024-08-26&location_id=5&tags=[\"newtag1\", \"newtag2\"]",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"facility",
+								"update",
+								"30"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "new facility"
+								},
+								{
+									"key": "creation_date",
+									"value": "2024-08-26"
+								},
+								{
+									"key": "location_id",
+									"value": "5"
+								},
+								{
+									"key": "tags",
+									"value": "[\"newtag1\", \"newtag2\"]"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete facilities",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/api/facility/delete/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"facility",
+								"delete",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "locations",
+			"item": [
+				{
+					"name": "Create location",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/api/location/create?city=Amsterdam&address=ROCVA&zip_code=1015&country_code=NL&phone_number=0612345678",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"location",
+								"create"
+							],
+							"query": [
+								{
+									"key": "city",
+									"value": "Amsterdam"
+								},
+								{
+									"key": "address",
+									"value": "ROCVA"
+								},
+								{
+									"key": "zip_code",
+									"value": "1015"
+								},
+								{
+									"key": "country_code",
+									"value": "NL"
+								},
+								{
+									"key": "phone_number",
+									"value": "0612345678"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show Location",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/api/location/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"location",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Index Location",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/api/location",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"location"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "test",
+			"item": [
+				{
+					"name": "test route",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/api/test",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"test"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Search Facility",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/api/search?name=company&location=Amstedam&tags=custom-tag",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"search"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "company"
+						},
+						{
+							"key": "location",
+							"value": "Amstedam"
+						},
+						{
+							"key": "tags",
+							"value": "custom-tag"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

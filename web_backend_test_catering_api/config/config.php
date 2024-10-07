@@ -4,7 +4,7 @@ return [
     'db' => [
         'host' => 'localhost',
         'database' => 'dtt-database',
-        'username' => '',
-        'password' => '',
+        'username' => 'Xander',
+        'password' => 'Xander2006!',
     ],
 ];

@@ -1,8 +1,5 @@
 <?php
 
-/** @var Bramus\Router\Router $router */
-$repository = new App\Repository\FacilityRepository();
-
 // Define routes here
 $router->get('/test', App\Controllers\IndexController::class . '@test');
 $router->get('/', App\Controllers\IndexController::class . '@test');
@@ -17,12 +14,6 @@ $router->post('/facility/create', App\Controllers\FacilityController::class . '@
 $router->put('/facility/update/(\d+)', App\Controllers\FacilityController::class . '@update');
 $router->delete('/facility/delete/(\d+)', App\Controllers\FacilityController::class . '@delete');
 
-// example:
-// http://localhost/api/search?name=Hahn&tag=cutsom-tag
-
 // make search method
-$router->get('/search', function() use ($repository) {
-    $queryParams = $_GET;
-    return $repository->search($queryParams);
-});
+$router->get('/search',  App\Controllers\SearchController::class . '@search');
 
